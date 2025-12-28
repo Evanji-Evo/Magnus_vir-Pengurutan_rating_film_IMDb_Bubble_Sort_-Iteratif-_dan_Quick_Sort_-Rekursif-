@@ -13,6 +13,58 @@ def csv_to_movie(file_path):
             MovieData.append(row)
     return MovieData
 
+def csv_to_movie_500(file_path):
+    MovieData = [] # Local list is better
+    with open(file_path, 'r', encoding='utf-8') as movie_File:
+        read_movie_csv = csv.reader(movie_File)
+        for i, row in enumerate(read_movie_csv):
+            if i > 500 :
+                break
+            MovieData.append(row)
+    return MovieData
+
+
+def csv_to_movie_1000(file_path):
+    MovieData = [] # Local list is better
+    with open(file_path, 'r', encoding='utf-8') as movie_File:
+        read_movie_csv = csv.reader(movie_File)
+        for i, row in enumerate(read_movie_csv):
+            if i > 1000 :
+                break
+            MovieData.append(row)
+    return MovieData
+
+def csv_to_movie_2000(file_path):
+    MovieData = [] # Local list is better
+    with open(file_path, 'r', encoding='utf-8') as movie_File:
+        read_movie_csv = csv.reader(movie_File)
+        for i, row in enumerate(read_movie_csv):
+            if i > 2000 :
+                break
+            MovieData.append(row)
+    return MovieData
+
+def csv_to_movie_4000(file_path):
+    MovieData = [] # Local list is better
+    with open(file_path, 'r', encoding='utf-8') as movie_File:
+        read_movie_csv = csv.reader(movie_File)
+        for i, row in enumerate(read_movie_csv):
+            if i > 4000 :
+                break
+            MovieData.append(row)
+    return MovieData
+
+def csv_to_movie_8000(file_path):
+    MovieData = [] # Local list is better
+    with open(file_path, 'r', encoding='utf-8') as movie_File:
+        read_movie_csv = csv.reader(movie_File)
+        for i, row in enumerate(read_movie_csv):
+            if i > 8000 :
+                break
+            MovieData.append(row)
+    return MovieData
+
+
 def get_rating(movie_row):
     try:
         return float(movie_row[2])
@@ -52,12 +104,87 @@ def quickSort(MovieData, low, high):
 def main():
     file_path = 'Top_10000_Movies_IMDb.csv'
     movie_data_for_bubble = csv_to_movie(file_path)
+    movie_data_for_bubble_500 = csv_to_movie_500(file_path)
+    movie_data_for_bubble_1000 = csv_to_movie_1000(file_path)
+    movie_data_for_bubble_2000 = csv_to_movie_2000(file_path)
+    movie_data_for_bubble_4000 = csv_to_movie_4000(file_path)
+    movie_data_for_bubble_8000 = csv_to_movie_8000(file_path)
     movie_data_for_quick = csv_to_movie(file_path)
-    n = len(movie_data_for_bubble)
+    movie_data_for_quick_500 = csv_to_movie_500(file_path)
+    movie_data_for_quick_1000 = csv_to_movie_1000(file_path)
+    movie_data_for_quick_2000 = csv_to_movie_2000(file_path)
+    movie_data_for_quick_4000 = csv_to_movie_4000(file_path)
+    movie_data_for_quick_8000 = csv_to_movie_8000(file_path)
 
+    print("\nData size 500")
     print("--- Running Bubble Sort ---")
     start_time_bubble = time.perf_counter()
-    bubbleSort(movie_data_for_bubble, n)
+    bubbleSort(movie_data_for_bubble, len(movie_data_for_bubble_500))
+    end_time_bubble = time.perf_counter()
+    print(f'Bubble Sort finished in: {end_time_bubble - start_time_bubble:.4f} seconds')
+
+    print("\n--- Running Quick Sort ---")
+    start_time_quick = time.perf_counter()
+    quickSort(movie_data_for_quick, 1, len(movie_data_for_quick_500)-1)
+    end_time_quick = time.perf_counter()
+    print(f'Quick Sort finished in: {end_time_quick - start_time_quick:.4f} seconds')
+
+    print("\nData size 1.000")
+    print("--- Running Bubble Sort ---")
+    start_time_bubble = time.perf_counter()
+    bubbleSort(movie_data_for_bubble, len(movie_data_for_bubble_1000))
+    end_time_bubble = time.perf_counter()
+    print(f'Bubble Sort finished in: {end_time_bubble - start_time_bubble:.4f} seconds')
+
+    print("\n--- Running Quick Sort ---")
+    start_time_quick = time.perf_counter()
+    quickSort(movie_data_for_quick, 1, len(movie_data_for_quick_1000)-1)
+    end_time_quick = time.perf_counter()
+    print(f'Quick Sort finished in: {end_time_quick - start_time_quick:.4f} seconds')
+
+    print("\nData size 2.000")
+    print("--- Running Bubble Sort ---")
+    start_time_bubble = time.perf_counter()
+    bubbleSort(movie_data_for_bubble, len(movie_data_for_bubble_2000))
+    end_time_bubble = time.perf_counter()
+    print(f'Bubble Sort finished in: {end_time_bubble - start_time_bubble:.4f} seconds')
+
+    print("\n--- Running Quick Sort ---")
+    start_time_quick = time.perf_counter()
+    quickSort(movie_data_for_quick, 1, len(movie_data_for_quick_2000)-1)
+    end_time_quick = time.perf_counter()
+    print(f'Quick Sort finished in: {end_time_quick - start_time_quick:.4f} seconds')
+
+    print("\nData size 4.000")
+    print("--- Running Bubble Sort ---")
+    start_time_bubble = time.perf_counter()
+    bubbleSort(movie_data_for_bubble, len(movie_data_for_bubble_4000))
+    end_time_bubble = time.perf_counter()
+    print(f'Bubble Sort finished in: {end_time_bubble - start_time_bubble:.4f} seconds')
+
+    print("\n--- Running Quick Sort ---")
+    start_time_quick = time.perf_counter()
+    quickSort(movie_data_for_quick, 1, len(movie_data_for_quick_4000)-1)
+    end_time_quick = time.perf_counter()
+    print(f'Quick Sort finished in: {end_time_quick - start_time_quick:.4f} seconds')
+
+    print("\nData size 8.000")
+    print("--- Running Bubble Sort ---")
+    start_time_bubble = time.perf_counter()
+    bubbleSort(movie_data_for_bubble, len(movie_data_for_bubble_8000))
+    end_time_bubble = time.perf_counter()
+    print(f'Bubble Sort finished in: {end_time_bubble - start_time_bubble:.4f} seconds')
+
+    print("\n--- Running Quick Sort ---")
+    start_time_quick = time.perf_counter()
+    quickSort(movie_data_for_quick, 1, len(movie_data_for_quick_8000)-1)
+    end_time_quick = time.perf_counter()
+    print(f'Quick Sort finished in: {end_time_quick - start_time_quick:.4f} seconds')
+
+    print("\nData size 10.000")
+    print("--- Running Bubble Sort ---")
+    start_time_bubble = time.perf_counter()
+    bubbleSort(movie_data_for_bubble, len(movie_data_for_bubble))
     end_time_bubble = time.perf_counter()
     print(f'Bubble Sort finished in: {end_time_bubble - start_time_bubble:.4f} seconds')
 
