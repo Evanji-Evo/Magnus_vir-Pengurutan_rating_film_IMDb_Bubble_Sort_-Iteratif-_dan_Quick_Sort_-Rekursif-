@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analisis Kompleksitas Algoritma Sorting</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #ec4899;
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 { margin-bottom: 10px; font-weight: 800; letter-spacing: -1px; }
+        p.subtitle { color: #94a3b8; }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border: 1px solid #334155;
+        }
+
+        /* Controls */
+        .control-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; color: #cbd5e1; }
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            background: #334155;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            box-sizing: border-box; 
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        button:active { transform: scale(0.98); }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* Stats */
+        .stat-box {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+        }
+        .stat-box.quick { border-left-color: var(--secondary); margin-top: 10px;}
+        
+        .stat-value { font-size: 1.5rem; font-weight: bold; }
+        .stat-label { font-size: 0.875rem; color: #94a3b8; }
+
+        /* Loading */
+        .loader {
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: none;
+            margin: 10px auto;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>IMDb Sorting Analysis</h1>
+            <p class="subtitle">Perbandingan Efisiensi Bubble Sort (Iteratif) vs Quick Sort (Rekursif)</p>
+        </header>
+
+        <div class="dashboard">
+            <div class="card">
+                <h3>Panel Kontrol</h3>
+                <div class="control-group">
+                    <label for="inputN">Ukuran Masukan (N)</label>
+                    <input type="number" id="inputN" placeholder="Contoh: 100, 1000..." value="1000">
+                    <small style="color: #64748b; display:block; margin-top:5px;">Max rekomen: 10,000</small>
+                </div>
+                
+                <button onclick="runAnalysis()" id="runBtn">Jalankan Analisis</button>
+                <div class="loader" id="loader"></div>
+
+                <div id="resultsArea" style="margin-top: 30px; display: none;">
+                    <h4>Hasil Terakhir (N=<span id="lastN">0</span>)</h4>
+                    <div class="stat-box">
+                        <div class="stat-label">Bubble Sort Time</div>
+                        <div class="stat-value"><span id="resBubble">0</span> s</div>
+                    </div>
+                    <div class="stat-box quick">
+                        <div class="stat-label">Quick Sort Time</div>
+                        <div class="stat-value"><span id="resQuick">0</span> s</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <canvas id="complexityChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="card" style="margin-top: 20px;">
+            <h3>Analisis Kompleksitas</h3>
+            <p><strong>1. Bubble Sort (Iteratif)</strong></p>
+            <p style="color:#94a3b8;">Kompleksitas Waktu: <code>O(N²)</code>. Algoritma ini membandingkan pasangan elemen yang berdekatan dan menukarnya jika urutannya salah. Karena menggunakan dua loop bersarang (nested loops), waktu eksekusi meningkat secara kuadratik seiring bertambahnya N. Pada data 10,000, algoritma ini sangat lambat (~38 detik).</p>
+            
+            <br>
+            
+            <p><strong>2. Quick Sort (Rekursif)</strong></p>
+            <p style="color:#94a3b8;">Kompleksitas Waktu: <code>O(N log N)</code> (Average Case). Algoritma ini menggunakan strategi <em>Divide and Conquer</em> dengan memilih pivot dan mempartisi array. Karena kedalaman rekursi adalah logaritmik dan partisi dilakukan linear, ia jauh lebih cepat. Pada data 10,000, algoritma ini selesai dalam hitungan detik (~7 detik).</p>
+        </div>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('complexityChart').getContext('2d');
+        
+        // Inisialisasi Chart
+        const complexityChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [], // Ini akan diisi N
+                datasets: [{
+                    label: 'Bubble Sort O(N²)',
+                    data: [],
+                    borderColor: '#6366f1', // Primary color
+                    backgroundColor: 'rgba(99, 102, 241, 0.2)',
+                    tension: 0.4,
+                    fill: true
+                }, {
+                    label: 'Quick Sort O(N log N)',
+                    data: [],
+                    borderColor: '#ec4899', // Secondary color
+                    backgroundColor: 'rgba(236, 72, 153, 0.2)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { labels: { color: '#cbd5e1' } },
+                    title: { display: true, text: 'Grafik Running Time vs Input Size (N)', color: '#fff' }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: { display: true, text: 'Waktu (Detik)', color: '#94a3b8' },
+                        grid: { color: '#334155' },
+                        ticks: { color: '#cbd5e1' }
+                    },
+                    x: {
+                        title: { display: true, text: 'Jumlah Data (N)', color: '#94a3b8' },
+                        grid: { color: '#334155' },
+                        ticks: { color: '#cbd5e1' }
+                    }
+                }
+            }
+        });
+
+        async function runAnalysis() {
+            const nInput = document.getElementById('inputN').value;
+            const btn = document.getElementById('runBtn');
+            const loader = document.getElementById('loader');
+            const resultsArea = document.getElementById('resultsArea');
+
+            if (!nInput || nInput <= 0) return alert("Masukkan N yang valid");
+
+            // UI State: Loading
+            btn.disabled = true;
+            btn.innerText = "Memproses...";
+            loader.style.display = "block";
+            resultsArea.style.opacity = "0.5";
+
+            try {
+                const response = await fetch('/run_sort', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ n: nInput })
+                });
+
+                const data = await response.json();
+
+                // Update UI Teks
+                document.getElementById('lastN').innerText = data.n;
+                document.getElementById('resBubble').innerText = data.bubble_time;
+                document.getElementById('resQuick').innerText = data.quick_time;
+                resultsArea.style.display = "block";
+                resultsArea.style.opacity = "1";
+
+                // Update Grafik (Push data baru)
+                addDataToChart(data.n, data.bubble_time, data.quick_time);
+
+            } catch (error) {
+                console.error(error);
+                alert("Terjadi kesalahan koneksi ke server Python.");
+            } finally {
+                // UI State: Reset
+                btn.disabled = false;
+                btn.innerText = "Jalankan Analisis";
+                loader.style.display = "none";
+            }
+        }
+
+        function addDataToChart(label, bubbleTime, quickTime) {
+            // Cek jika label sudah ada, update datanya saja
+            const existingIndex = complexityChart.data.labels.indexOf(label); // label di sini adalah integer N, tapi chart.js menyimpannya bisa sbg string/int
+
+            if (existingIndex !== -1) {
+                // Update existing data point
+                complexityChart.data.datasets[0].data[existingIndex] = bubbleTime;
+                complexityChart.data.datasets[1].data[existingIndex] = quickTime;
+            } else {
+                // Add new data point
+                complexityChart.data.labels.push(label);
+                complexityChart.data.datasets[0].data.push(bubbleTime);
+                complexityChart.data.datasets[1].data.push(quickTime);
+                
+                // Sort array agar grafik berurutan berdasarkan N (UX better)
+                sortChartData();
+            }
+            complexityChart.update();
+        }
+
+        function sortChartData() {
+            // Mengambil semua data, menggabungkannya, mengurutkan, dan memasukkan kembali
+            let chartData = complexityChart.data.labels.map((label, i) => {
+                return {
+                    label: label,
+                    bubble: complexityChart.data.datasets[0].data[i],
+                    quick: complexityChart.data.datasets[1].data[i]
+                };
+            });
+
+            chartData.sort((a, b) => a.label - b.label);
+
+            complexityChart.data.labels = chartData.map(e => e.label);
+            complexityChart.data.datasets[0].data = chartData.map(e => e.bubble);
+            complexityChart.data.datasets[1].data = chartData.map(e => e.quick);
+        }
+    </script>
+</body>
+</html>
