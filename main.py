@@ -13,14 +13,12 @@ PORT = 8000
 CSV_FILE_PATH = 'Top_10000_Movies_IMDb.csv'
 GLOBAL_MOVIE_DATA = []
 
-# --- 1. Load Data (Sama seperti logika main.py) ---
 def load_data():
     global GLOBAL_MOVIE_DATA
     try:
         with open(CSV_FILE_PATH, 'r', encoding='utf-8') as movie_File:
             read_movie_csv = csv.reader(movie_File)
             data = list(read_movie_csv)
-            # Bersihkan header jika ada
             try:
                 float(data[0][2])
             except:
@@ -31,7 +29,7 @@ def load_data():
         print("[ERROR] File CSV tidak ditemukan.")
         GLOBAL_MOVIE_DATA = []
 
-# --- 2. Algoritma Sorting (Logic Asli Anda) ---
+# --- 2. Algoritma Sorting 
 def get_rating(movie_row):
     try:
         return float(movie_row[2])
@@ -69,16 +67,13 @@ def quickSort(MovieData, low, high):
 # --- 3. HTTP Request Handler ---
 class MyRequestHandler(http.server.SimpleHTTPRequestHandler):
     
-    # Handle GET Request (Menampilkan HTML)
     def do_GET(self):
         if self.path == '/':
             self.path = 'index.html'
         return http.server.SimpleHTTPRequestHandler.do_GET(self)
 
-    # Handle POST Request (API untuk Sorting)
     def do_POST(self):
         if self.path == '/run_sort':
-            # 1. Baca data JSON yang dikirim frontend
             content_length = int(self.headers['Content-Length'])
             post_data = self.rfile.read(content_length)
             data_json = json.loads(post_data)
@@ -87,7 +82,6 @@ class MyRequestHandler(http.server.SimpleHTTPRequestHandler):
             total_data = len(GLOBAL_MOVIE_DATA)
             if n_size > total_data: n_size = total_data
 
-            # 2. Siapkan data copy agar data asli aman
             data_bubble = copy.deepcopy(GLOBAL_MOVIE_DATA[:n_size])
             data_quick = copy.deepcopy(GLOBAL_MOVIE_DATA[:n_size])
 
@@ -103,7 +97,6 @@ class MyRequestHandler(http.server.SimpleHTTPRequestHandler):
             end_quick = time.perf_counter()
             time_quick = end_quick - start_quick
 
-            # 3. Kirim respon balik ke frontend
             response = {
                 'n': n_size,
                 'bubble_time': round(time_bubble, 5),
@@ -117,11 +110,8 @@ class MyRequestHandler(http.server.SimpleHTTPRequestHandler):
         else:
             self.send_error(404)
 
-# --- 4. Main Execution ---
 if __name__ == "__main__":
     load_data()
-    # Menggunakan ThreadingTCPServer agar UI tidak hang jika ada multiple request (opsional)
-    # Tapi untuk tugas simple, TCPServer biasa cukup.
     with socketserver.TCPServer(("", PORT), MyRequestHandler) as httpd:
         print(f"\n--- Server Berjalan ---")
         print(f"Buka browser di: http://localhost:{PORT}")
